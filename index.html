@@ -1,54 +1,174 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title></title>
-    <meta name="description" content="">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
-</head>
-<body>
-    <br>
-    <div class="container">
-        <div id="main">
-            <div class="row">
-                <div class="col">
-                    <div class="card">
-                        <div class="card-body">
-                            <strong>Using Hashes</strong>
-                            <p>Using hashes may not be the best route for SEO and it may also be unusual for some users which may make them not use the website.<br>
-                            <small>Use cases: Apps, Landing Pages</small>
-                            </p>
-                            <div>
-                                <a href="/">Home</a>
-                                <a href="#about">About</a>
-                                <a href="#contact">Contact</a>
-                            </div>
-                        </div>
-                    </div>
-                    <br>
-                    <div class="card">
-                        <div class="card-body">
-                            <strong>Using URLs</strong>
-                            <p>Need to configure the webserver to serve the index.html for SPA Route Paths. This option is better for SEO and is more user friendly.<br>
-                            <small>Use cases: Websites</small></p>
-                    <nav>
-                        <a href="../">Home</a>
-                        <a href="../about">About</a>
-                        <a href="../contact">Contact</a>
-                    </nav>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-8">
-                    <div id="content"></div>
-                </div>
-            </div>
-        </div>
-    </div>
-    <script src="../js/hash-router.js"></script>
-    <!-- OR -->
-    <script src="../js/url-router.js"></script>
-</body>
-</html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Fetch API CRUD Example</title>
+  </head>
+  <body>
+    <h1>Fetch API CRUD Example</h1>
+
+    <!-- CREATE -->
+    <h2>Create Data</h2>
+    <form>
+      <label for="createTitle">Title:</label>
+      <input type="text" id="createTitle" name="createTitle">
+      <br><br>
+      <label for="createBody">Body:</label>
+      <textarea id="createBody" name="createBody"></textarea>
+      <br><br>
+      <button type="button" onclick="createData()">Create</button>
+    </form>
+    <br><br>
+
+    <!-- READ -->
+    <h2>Read Data</h2>
+     
+    <button type="button" onclick="getAll()">Read</button> 
+    <div class="container"></div>
+    <br><br>
+
+    <!-- UPDATE -->
+    <h2>Update Data</h2>
+    <form>
+      <label for="updateId">ID:</label>
+      <input type="text" id="updateId" name="updateId">
+      <br><br>
+      <label for="updateTitle">Title:</label>
+      <input type="text" id="updateTitle" name="updateTitle">
+      <br><br>
+      <label for="updateBody">Body:</label>
+      <textarea id="updateBody" name="updateBody"></textarea>
+      <br><br>
+      <button type="button" onclick="updateData()">Update</button>
+    </form>
+    <br><br>
+
+    <!-- DELETE -->
+    <h2>Delete Data</h2>
+    <form>
+      <label for="deleteId">ID:</label>
+      <input type="text" id="deleteId" name="deleteId">
+      <br><br>
+      <button type="button" onclick="deleteData()">Delete</button>
+    </form>
+    <br><br>
+
+<script>
+
+// CREATE
+// const createData1 = (data) => {
+const createData = () => {
+        const createTitle = document.querySelector('input[name="createTitle"]').value;
+        const createBody = document.querySelector('textarea[name="createBody"]').value;
+        const data = { title: createTitle, body: createBody };
+
+        fetch('https://jsonplaceholder.typicode.com/posts', {
+          method: 'POST',
+          body: JSON.stringify(data),
+          headers: {
+            'Content-type': 'application/json; charset=UTF-8'
+          }
+        })
+        .then(response => response.json())
+        .then(data => {
+          console.log('Data created:', data);
+        })
+        .catch(error => {
+          console.error('Error creating data:', error);
+        });
+      }
+
+  
+  // READ
+  const readData = (id) => {
+    fetch(`https://jsonplaceholder.typicode.com/posts/${id}`, {
+      method: 'GET',
+      headers: {
+        'Content-type': 'application/json; charset=UTF-8'
+      }
+    })
+    .then(response => response.json())
+    .then(data => {
+        console.log('id: ', data.id);
+        console.log('title: ', data.title);
+        console.log('body: ', data.body);
+    })
+    .catch(error => {
+      console.error('Error reading data:', error);
+    });
+  }
+  
+readData(10);
+  
+function getAll() {
+
+let html = '';
+
+const findAll = (type, url, param) => {
+  fetch(url, {
+          method: type,
+          headers: {
+            'Content-type': 'application/json; charset=UTF-8'
+          }
+        })
+        .then(response => response.json()) //parse json data
+        .then(function (posts) {
+            posts.forEach((post) => {
+                console.log(post.title); //Başlıkları console' a yazdırma
+                let htmlSegment = `<div class='user'>
+                        <p>${post.id}</p>
+                        <h2>${post.title}</h2>
+                        <p>${post.body}</p>
+                                    </div>`;
+
+                html += htmlSegment;
+            });
+        let container = document.querySelector('.container');
+        container.innerHTML = html;
+      })
+      .catch(error => {
+      console.error('Error updating data:', error);
+    });
+  }
+  findAll("GET", "https://jsonplaceholder.typicode.com/posts", "");    
+}
+  
+  // UPDATE
+  const updateData = () => {
+
+    const updateId = document.querySelector('input[name="updateId"]').value;
+    const updateTitle = document.querySelector('input[name="updateTitle"]').value;
+    const updateBody = document.querySelector('textarea[name="updateBody"]').value;
+    const updatedata = { id: updateId, title: updateTitle, body: updateBody };
+
+    fetch(`https://jsonplaceholder.typicode.com/posts/${updateId}`, {
+      method: 'PUT',
+      body: JSON.stringify(updatedata),
+      headers: {
+        'Content-type': 'application/json; charset=UTF-8'
+      }
+    })
+    .then(response => response.json())
+    .then(updatedata => {
+        console.log('Data: ', updatedata);
+    })
+    .catch(error => {
+      console.error('Error updating data:', error);
+    });
+  }
+  
+  // DELETE
+  const deleteData = () => {
+    const deleteId = document.querySelector('input[name="deleteId"]').value;
+    fetch(`https://jsonplaceholder.typicode.com/posts/${deleteId}`, {
+      method: 'DELETE'
+    })
+    .then(response => {
+      console.log('response.status: ', response.status);
+    })
+    .catch(error => {
+      console.error('Error deleting data:', error);
+    });
+  }
+
+</script>
