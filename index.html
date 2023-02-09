@@ -151,6 +151,7 @@ const findAll = (type, url, param) => {
     .then(response => response.json())
     .then(updatedata => {
         console.log('Data: ', updatedata);
+        console.log('Request.body: ', Request.body);
     })
     .catch(error => {
       console.error('Error updating data:', error);
