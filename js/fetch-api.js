@@ -1,3 +1,5 @@
+// with version
+
 async function fetchapi(url, param, type, data){
 
   const request = await fetch(url + param, { method: type, data })
